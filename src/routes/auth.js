@@ -22,7 +22,10 @@ router.post('/signup', async (req, res) => {
       expiresIn: '1h',
     });
 
-    res.json({ token });
+    res.status(201).json({ 
+      status : 201,
+      message : "Account Created Successfully"
+     });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: 'Server error' });
@@ -47,7 +50,21 @@ router.post('/login', async (req, res) => {
       expiresIn: '1h', // 1 minute token expiration
     });
     console.log("check four")
-    res.json({ token });
+    // res.json({ 
+    //   token: token,
+    //   status : 200,
+    //   message : "Account Created Successfully" 
+
+    // });
+
+    return res.status(200).json({
+      status: 200,
+      message: 'Login Successfully',
+      data: {
+        token,
+      },
+    });
+
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }
