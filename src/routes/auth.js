@@ -71,7 +71,7 @@ router.post('/login', async (req, res) => {
 });
 
 // Fetch User Data (GET route)
-router.get('/user/data', async (req, res) => {
+router.get('/user/data', verifyToken, async (req, res) => {
   const {userId} = req.body;
   try {
     const user = await User.findById(userId).select('-password');
@@ -90,7 +90,7 @@ router.get('/user/data', async (req, res) => {
 });
 
 // Update User Data Route (PUT)
-router.post('/user/update', async (req, res) => {
+router.post('/user/update',verifyToken, async (req, res) => {
   const { userId , name, email, password, phoneNumber,walletAddress, alertAddress,  tempAddress, premiumService, isAlertOn, alertType } = req.body;
 
   try {
