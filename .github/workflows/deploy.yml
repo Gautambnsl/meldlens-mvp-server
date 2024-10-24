@@ -1,39 +1,28 @@
-name: Deploy to AWS EC2
+name: Deploy to AWS on Pull Request
 
 on:
-  push:
+  pull_request:
     branches:
-      - main  # Trigger the workflow on pushes to the main branch
+      - main  # Change to your branch if needed
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
+    - name: Set up SSH agent and connect to EC2
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.AWS_SSH_KEY }}
 
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests (optional)
-        run: npm test  # This step can be skipped if you don't have tests
-
-      - name: Deploy to EC2
-        env:
-          HOST: ${{ secrets.EC2_HOST }}  # Your EC2 instance IP or hostname
-          USER: ${{ secrets.EC2_USER }}  # Your SSH user
-          KEY: ${{ secrets.EC2_SSH_KEY }}  # Your private SSH key
-        run: |
-          # Copy files to EC2 instance
-          echo "$KEY" > key.pem
-          chmod 600 key.pem
-          scp -o StrictHostKeyChecking=no -i key.pem -r ./* $USER@$HOST:/path/to/your/app/
-          
-          # SSH into EC2 and restart the server
-          ssh -o StrictHostKeyChecking=no -i key.pem $USER@$HOST << 'EOF'
-            cd /path/to/your/app/
-            npm install   # Install any new dependencies
-            npm start     # Or however you start your server
-          EOF
+    - name: Deploy on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-3-109-155-26.ap-south-1.compute.amazonaws.com << 'EOF'
+          cd  meldlens-mvp-server  # Replace with your actual project directory on EC2
+          git pull origin main      # Pull latest changes from the repo
+          npm install               # Install dependencies if needed
+          pm2 restart all           # Restart the Node.js app with PM2
+        EOF
