@@ -16,7 +16,7 @@ router.post("/sub",verifyToken, async (req, res) => {
 
 	// Check if the user is already subscribed
 	if (userSubscriptions[alertAddress]) {
-		return res.status(400).json({ message: "Sorry, Already subscribed." });
+		return res.status(400).json({ message: "Sorry1, Already subscribed." });
 	}
 
 	let user = await User.findById(userId);
