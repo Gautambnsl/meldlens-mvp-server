@@ -9,14 +9,14 @@ const makeSms = require("../middleware/makeSms");
 const makePhoneCall = require("../middleware/makePhone");
 
 // Subscribe to the alert service (creates a listener for user's address)
-router.post("/sub", async (req, res) => {
+router.post("/sub",verifyToken, async (req, res) => {
 	console.log("subAlertService initiated");
 
 	const { userId, alertType, alertAddress } = req.body;
 
 	// Check if the user is already subscribed
 	if (userSubscriptions[alertAddress]) {
-		return res.status(400).json({ message: "Sorry, Already subscribed." });
+		return res.status(400).json({ message: "Already subscribed." });
 	}
 
 	let user = await User.findById(userId);
@@ -92,7 +92,7 @@ router.post("/sub", async (req, res) => {
 });
 
 // Unsubscribe from the alert service (removes the listener for the user's address)
-router.post("/unsub", async (req, res) => {
+router.post("/unsub",verifyToken, async (req, res) => {
 	console.log("unsubAlertService initiated");
 
 	const { userId } = req.body;
