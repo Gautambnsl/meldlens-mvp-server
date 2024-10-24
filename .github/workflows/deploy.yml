@@ -1,7 +1,7 @@
 name: Deploy to AWS on Pull Request
 
 on:
-  pull_request:
+  push:
     branches:
       - main  # Change to your branch if needed
 
