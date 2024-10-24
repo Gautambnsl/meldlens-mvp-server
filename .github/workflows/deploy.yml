@@ -3,7 +3,7 @@ name: Deploy to AWS on Pull Request
 on:
   push:
     branches:
-      - main  # Change to your branch if needed
+      - main  # You can adjust this to your specific branch
 
 jobs:
   deploy:
@@ -13,16 +13,16 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up SSH agent and connect to EC2
+    - name: Set up SSH key
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.AWS_SSH_KEY }}
 
-    - name: Deploy on EC2
+    - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@ec2-3-109-155-26.ap-south-1.compute.amazonaws.com << 'EOF'
-          cd  meldlens-mvp-server  # Replace with your actual project directory on EC2
-          git pull origin main      # Pull latest changes from the repo
-          npm install               # Install dependencies if needed
-          pm2 restart all           # Restart the Node.js app with PM2
+        ssh -o StrictHostKeyChecking=no ubuntu@ec2-3-109-155-26.ap-south-1.compute.amazonaws.com << 'EOF'
+          cd meldlens-mvp-server  # Replace with the actual project directory
+          git pull origin main      # Pull the latest changes from the GitHub repo
+          npm install               # Install dependencies if necessary
+          pm2 restart all           # Restart the Node.js app using PM2
         EOF
